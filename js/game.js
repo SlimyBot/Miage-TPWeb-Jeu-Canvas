@@ -25,13 +25,14 @@ class DrawnObject {
 }
 
 class Character extends DrawnObject {
-    // Le joueur
+    // Classe principale pour le joueur
+    // Elle gère le dessin et le déplacement du joueur
     constructor(x, y, width, height, color, speed) {
         super(x, y, width, height, color);
-        this.speed = speed;
+        this.speed = speed; // La vitesse correspond à la distance parcourue par le joueur en un seconde (n pixels)
     }
 
-    draw(ctx) {
+    draw(ctx) { // On surcharge la méthode draw de la classe DrawnObject
         ctx.save();
         
         // Dessin du corps
@@ -72,16 +73,24 @@ class Character extends DrawnObject {
         const previousY = this.y;
 
         // Selon la touche pressée, on déplace le joueur selon sa vitesse
-        if (keys.ArrowLeft) this.x -= this.speed;
-        if (keys.ArrowRight) this.x += this.speed;
-        if (keys.ArrowUp) this.y -= this.speed;
-        if (keys.ArrowDown) this.y += this.speed;
+        if (keys.ArrowLeft) {
+             this.x -= this.speed; 
+        }
+        if (keys.ArrowRight) { 
+            this.x += this.speed; 
+        }
+        if (keys.ArrowUp) { 
+            this.y -= this.speed; 
+        }
+        if (keys.ArrowDown) { 
+            this.y += this.speed; 
+        }
 
         // Vérifie que le joueur ne sort pas du canvas
         this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
         this.y = Math.max(0, Math.min(canvas.height - this.height, this.y));
 
-        return { previousX, previousY };
+        return { previousX, previousY }; // On retourne la position précédente pour pouvoir la réutiliser dans la fonction update si collision
     }
 
     reset() {
@@ -92,8 +101,11 @@ class Character extends DrawnObject {
 }
 
 class Obstacle extends DrawnObject {
+    // Classe de base pour tous les obstacles (murs, resets, etc.)
     constructor(x, y, width, height, color) {
         super(x, y, width, height, color);
+
+        // Un obstacle peut être en mouvement
         this.moving = false;
         this.pointA = null;
         this.pointB = null;
@@ -116,6 +128,7 @@ class Obstacle extends DrawnObject {
 
 class Wall extends Obstacle {
     // Les murs sont les obstacles que le joueur ne peut traverser
+    // Ils sont dessinés par la méthode draw de la classe DrawnObject
     constructor(x, y, width, height, colors) {
         super(x, y, width, height, colors.walls);
     }
@@ -127,7 +140,7 @@ class Reset extends Obstacle {
         super(x, y, width, height, colors.resetTrigger);
     }
 
-    draw(ctx) {
+    draw(ctx) { // On surcharge la méthode draw de la classe DrawnObject
         // Les resets sont représentés par un X
         super.draw(ctx);
         
@@ -146,8 +159,12 @@ class Reset extends Obstacle {
 }
 
 class Torch extends DrawnObject {
-    constructor(x, y, colors) {
+    // Une torche émet de la lumière comme le joueur
+    // Étant donné sa nature particulière, elle n'est pas considérée comme un obstacle
+    constructor(x, y) {
         super(x, y, 10, 10, 'transparent'); // La torche est invisible
+
+        // Une torche peut être en mouvement
         this.moving = false;
         this.pointA = null;
         this.pointB = null;
@@ -162,7 +179,7 @@ class Exit extends DrawnObject {
         super(x, y, 40, 40, colors.exit);
     }
 
-    draw(ctx) {
+    draw(ctx) { // On surcharge la méthode draw de la classe DrawnObject
         ctx.save();
         ctx.fillStyle = this.color;
         ctx.beginPath();
@@ -182,6 +199,8 @@ class UI {
     constructor(canvas, colors) {
         this.canvas = canvas;
         this.colors = colors;
+
+        // Valeurs de configuration pour les éléments de l'UI
         this.levelInfo = { // Affiche le nom et le numéro du niveau actuel
             x: 20,
             y: 40,
@@ -190,17 +209,18 @@ class UI {
             spacing: 30
         };
         this.timer = {
-            x: canvas.width - 150,
+            x: canvas.width - 130,
             y: 40,
             font: "24px Times New Roman",
             color: colors.text
         };
         this.timeline = { // La timeline représente les niveaux du jeu
             y: canvas.height - 30, 
-            dotRadius: 6,
-            dotSpacing: 30,
-            color: '#aaaaaa',
-            completedColor: "#ffffff"
+            dotRadius: 6, // Rayon des points de la timeline
+            dotSpacing: 30, // Espace entre les points de la timeline
+            color: '#aaaaaa', // Couleur des points de la timeline (base)
+            completedColor: "#ffffff", // Couleur des points de la timeline (complété)
+            currentColor: "#344fa1" // Couleur du point actuel
         };
     }
 
@@ -252,9 +272,10 @@ class UI {
             ctx.beginPath();
             if (i === totalLevels - 1) {
                 // Level final
-                ctx.moveTo(x, this.timeline.y - this.timeline.dotRadius);
-                ctx.lineTo(x - this.timeline.dotRadius, this.timeline.y + this.timeline.dotRadius);
-                ctx.lineTo(x + this.timeline.dotRadius, this.timeline.y + this.timeline.dotRadius);
+                // Le "-5" permet de coller le triangle à la ligne
+                ctx.moveTo(x - 5, this.timeline.y - this.timeline.dotRadius);
+                ctx.lineTo(x - 5 - this.timeline.dotRadius, this.timeline.y + this.timeline.dotRadius);
+                ctx.lineTo(x - 5 + this.timeline.dotRadius, this.timeline.y + this.timeline.dotRadius);
                 ctx.closePath();
             } else {
                 // Level basique
@@ -265,7 +286,7 @@ class UI {
             if (i < currentLevel) {
                 ctx.fillStyle = this.timeline.completedColor; // Level complété
             } else if (i === currentLevel) {
-                ctx.fillStyle = this.colors.player; // Level actuel
+                ctx.fillStyle = this.timeline.currentColor; // Level actuel
             } else {
                 ctx.fillStyle = this.timeline.color; // Restants
             }
@@ -273,8 +294,13 @@ class UI {
             ctx.fill();
             
             // Bordures
-            ctx.strokeStyle = this.timeline.color;
-            ctx.lineWidth = 2;
+            if (i < currentLevel) {
+                ctx.strokeStyle = this.timeline.completedColor;
+            } else {
+                ctx.strokeStyle = this.timeline.color;
+            }
+
+            ctx.lineWidth = 3;
             ctx.stroke();
         }
 
@@ -284,9 +310,9 @@ class UI {
     drawDarkness(ctx, lighting, player, torches) {
         // Pour le système d'obscurité
         // Dans un premier temps on crée un canvas de la même taille que le canvas du jeu
-        // On le remplit de la couleur d'obscurité
-        // Puis on dessine les lumières qui vont être retirées de l'obscurité grâce à un filtre de composition
-
+        // On le remplit de la couleur d'obscurité (ici rgba(0, 0, 0, 0.95))
+        // Puis on dessine les lumières
+        // Les zones pré dessinées sont gardées SAUF celles où les lumières sont dessinées (destination-out)
         const darkCanvas = document.createElement('canvas');
         darkCanvas.width = this.canvas.width;
         darkCanvas.height = this.canvas.height;
@@ -359,35 +385,41 @@ export default class Game {
         // Configuration de la lumière
         this.lighting = {
             darkness: this.colors.darkness,
-            playerRadius: 100,
+            playerRadius: 150,
             torchRadius: 50
         };
 
-        // Lance le niveau actuel
-        this.startLevel(this.currentLevelIndex);
+        // Lance le premier niveau
+        this.startGame(this.currentLevelIndex);
     }
 
-    startLevel(index) {
-        const levelData = this.levels[index];
+    startGame() {
+        const levelData = this.levels[0];
         if (!levelData) {
             console.error('Level data not found');
             return;
         }
         console.log('Starting level:', levelData.name);
         this.initLevel(levelData);
-        this.start(); // On lance le niveau
+        this.start(); // On lance le jeu
     }
 
     initLevel(levelData) {
         // On initialise le niveau
 
         // On initialise le joueur
+        // Dans l'ordre : position x, position y, largeur, hauteur, couleur, vitesse
         this.player = new Character(10, 60, 50, 50, this.colors.player, 2);
         
         // On initialise la sortie
+        // Dans l'ordre : position x, position y, couleur
         this.exit = new Exit(levelData.exit.x, levelData.exit.y, this.colors);
 
+        // Pour récupérer les autres éléments du niveau, on utilise la méthode map
+        // On map chaque élément du JSON et on le convertit en fonction de son type
+
         // On récupère les obstacles dans le JSON et on les initialise
+        // Dans l'ordre : position x, position y, largeur, hauteur, couleur
         this.obstacles = levelData.obstacles.map(obs => {
             if (obs.type === "wall") {
                 return new Wall(obs.x, obs.y, obs.width, obs.height, this.colors);
@@ -396,11 +428,12 @@ export default class Game {
                 return new Reset(obs.x, obs.y, obs.width, obs.height, this.colors);
             }
             return null;
-        }).filter(obs => obs !== null);
+        }).filter(obs => obs !== null); // On filtre les obstacles null pour éviter les erreurs
 
         // Même principe que pour les obstacles pour les torches
+        // Dans l'ordre : position x, position y
         this.torches = levelData.torches.map(torch => 
-            new Torch(torch.x, torch.y, this.colors)
+            new Torch(torch.x, torch.y)
         );
     }
   
@@ -446,34 +479,44 @@ export default class Game {
     }
   
     mainAnimationLoop() {
-      // Boucle principale pour dessiner tous les éléments du jeu
+        // Boucle principale pour dessiner tous les éléments du jeu
+        // 60 fois par seconde
 
-      // Efface le canvas et dessine le fond
-      this.ctx.fillStyle = this.colors.background;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  
-      // Met à jour le jeu et le timer
-      this.update();
-      this.updateTimer();
-      
-      // Dessine les éléments du niveau récupérés dans le JSON
-      this.drawCurrentLevel();
-      
-      // Dessine le joueur et la sortie
-      this.player.draw(this.ctx);
-      this.exit.draw(this.ctx);
-      
-      // Dessine tous les éléments de l'UI
-      this.ui.drawDarkness(this.ctx, this.lighting, this.player, this.torches);
-      this.ui.drawLevelInfo(this.ctx, this.currentLevelIndex, this.levels[this.currentLevelIndex].name);
-      this.ui.drawTimer(this.ctx, this.timer.currentTime);
-      this.ui.drawTimeline(this.ctx, this.currentLevelIndex, this.levels.length);
-  
-      requestAnimationFrame(this.mainAnimationLoop.bind(this));
+        // Efface le canvas et dessine le fond
+        this.ctx.fillStyle = this.colors.background;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+        // Met à jour le jeu et le timer
+        this.update();
+        this.updateTimer();
+        
+        // Dessine les éléments du niveau récupérés dans le JSON (obstacles, torches)
+        // Dessine tous les obstacles
+        for (const obstacle of this.obstacles) {
+            obstacle.draw(this.ctx);
+        }
+                
+        // Dessine les torches
+        for (const torch of this.torches) {
+            torch.draw(this.ctx);
+        };
+        
+        // Dessine le joueur et la sortie
+        this.player.draw(this.ctx);
+        this.exit.draw(this.ctx);
+        
+        // Dessine tous les éléments de l'UI
+        this.ui.drawDarkness(this.ctx, this.lighting, this.player, this.torches);
+        this.ui.drawLevelInfo(this.ctx, this.currentLevelIndex, this.levels[this.currentLevelIndex].name);
+        this.ui.drawTimer(this.ctx, this.timer.currentTime);
+        this.ui.drawTimeline(this.ctx, this.currentLevelIndex, this.levels.length);
+    
+        requestAnimationFrame(this.mainAnimationLoop.bind(this));
     }
   
     update() {
       // Réaction selon les actions du joueur
+      // 60 fois par seconde
 
       // Déplacement du joueur
       const { previousX, previousY } = this.player.move(this.keys, this.canvas);
@@ -514,18 +557,6 @@ export default class Game {
       }
     }
 
-    drawCurrentLevel() {
-      // Dessine tous les obstacles
-      for (const obstacle of this.obstacles) {
-        obstacle.draw(this.ctx);
-      }
-      
-      // Dessine les torches
-      for (const torch of this.torches) {
-        torch.draw(this.ctx);
-      }
-    }
-
     updateTimer() {
       if (this.timer.running) {
         this.timer.currentTime = Date.now() - this.timer.startTime;
@@ -539,6 +570,16 @@ export default class Game {
         // Si on a fini tous les niveaux, on affiche le temps écoulé et on réinitialise le jeu
         if (this.currentLevelIndex >= this.levels.length) {
             alert(`You won! Total time: ${Math.floor(this.timer.currentTime / 1000)} seconds`);
+
+            // On stock le temps dans le span score
+            // Le span score permettra de récupérer le dernier score du joueur
+
+            let score = document.querySelector(".score").textContent;
+            if(score === "0") {
+                document.querySelector(".score").textContent = Math.floor(this.timer.currentTime / 1000);
+            } else {
+                document.querySelector(".score").textContent = Math.min(score, Math.floor(this.timer.currentTime / 1000));
+            }
 
             this.resetGame();
             return;

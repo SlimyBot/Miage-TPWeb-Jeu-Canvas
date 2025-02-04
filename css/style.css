@@ -12,6 +12,8 @@ body {
     background-color: #344fa1;
 
     font-family: 'Arial', sans-serif;
+
+    overflow: hidden;
 }
 
 .container {
@@ -81,4 +83,8 @@ canvas {
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
+}
+
+.score {
+    display: none;
 }

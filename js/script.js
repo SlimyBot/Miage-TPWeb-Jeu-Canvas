@@ -2,6 +2,7 @@ import Game from "./game.js";
 
 window.onload = init;
 
+// On définit les couleurs du jeu
 const gameColors = {
     background: '#232323',
     player: '#344fa1',
@@ -13,7 +14,7 @@ const gameColors = {
 };
 
 let levels = []; // Tableau pour pouvoir importer les niveaux
-
+    
 async function loadLevels() {
     // On récupère les niveaux dans le fichier levels.json
     try {
