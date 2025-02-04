@@ -1,0 +1,146 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+
+    background-color: #344fa1;
+    overflow: auto;
+}
+
+.back {
+    position: flex;
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid #000;
+}
+
+.back:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: #fff;
+    border-radius: 100px;
+    padding: 10px;
+    width: 80%;
+    margin-top: 20px;
+}
+
+.controls button {
+    margin: 5px;
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid #000;
+    background-color: #fff;
+    color: #000;
+
+    cursor: pointer;
+}
+
+.controls button:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+.controls button.selected {
+    background-color: #000;
+    color: #fff;
+}
+
+.controls button.eraser {
+    background-color: #e94560;
+    color: #fff;
+}
+
+.controls button span {
+    font-family: 'Material Symbols Outlined';
+    font-size: 15px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+#editor-container {
+    width: 800px;
+    height: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(20, 40px);
+    grid-template-rows: repeat(20, 40px);
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.grid-cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.grid-cell.wall {
+    background-color: #344fa1;
+}
+
+.grid-cell.reset {
+    background-color: #e94560;
+}
+
+.grid-cell.exit {
+    background-color: #4ecca3;
+}
+
+.grid-cell.torch {
+    background-color: #ffeb3b;
+}
+
+.vertical-spacer {
+    height: 20px;
+    background-color: #000;
+    width: 1px;
+
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#import-export-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#import-export-container textarea {
+    width: 320px;
+    height: 200px;
+}
+
+#gameCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}

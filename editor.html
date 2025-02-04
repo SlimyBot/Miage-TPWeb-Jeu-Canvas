@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Editor</title>
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=ink_eraser" />
+</head>
+<body>
+    <div id="controls" class="controls">
+        <div>
+            <a href="index.html" class="back">Back</a>
+        </div>
+        <div>
+            <button onclick="setElementType('wall')">Wall</button>
+            <button onclick="setElementType('reset')">Thorns</button>
+            <button onclick="setElementType('exit')">Exit</button>
+            <button onclick="setElementType('torch')">Light</button>
+        </div>
+        <div class="vertical-spacer"></div>
+        <button onclick="setElementType('eraser')">
+            <span class="material-symbols-outlined">
+                ink_eraser
+            </span>
+        </button>
+    </div>
+    <div id="editor-container">
+        <div id="grid"></div>
+        <canvas id="gameCanvas" width="800" height="800" style="display: none;"></canvas>
+    </div>
+    <div id="controls" class="controls">
+        <button onclick="importLevel()">Import Level</button>
+        <button onclick="exportLevel()">Export Level</button>
+        <button onclick="tryLevel()" id="tryLevelBtn">Try Level</button>
+    </div>
+    <div id="import-export-container">
+        <textarea id="importArea" placeholder="Paste JSON here"></textarea>
+        <textarea id="output" readonly></textarea>
+    </div>
+    <script type="module" src="js/editor.js"></script>
+    <script type="module" src="js/game.js"></script>
+</body>
+</html>
