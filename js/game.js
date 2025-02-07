@@ -88,7 +88,7 @@ class Character extends DrawnObject {
 
         // Vérifie que le joueur ne sort pas du canvas
         this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
-        this.y = Math.max(0, Math.min(canvas.height - this.height, this.y));
+        this.y = Math.max(50, Math.min(canvas.height - this.height, this.y));
 
         return { previousX, previousY }; // On retourne la position précédente pour pouvoir la réutiliser dans la fonction update si collision
     }
@@ -466,7 +466,10 @@ export default class Game {
 
     handleKeyUp(e) {
         // Remet la touche à false quand elle est relâchée
-        if (this.keys.hasOwnProperty(e.code)) {
+        if (e.code === 'KeyS') {
+            return;
+        }
+        else if (this.keys.hasOwnProperty(e.code)) {
             this.keys[e.code] = false;
         }
     }
@@ -569,10 +572,17 @@ export default class Game {
 
         // Si on a fini tous les niveaux, on affiche le temps écoulé et on réinitialise le jeu
         if (this.currentLevelIndex >= this.levels.length) {
+            if (this.keys.KeyS) {
+                alert(`You won! Total time: ${Math.floor(this.timer.currentTime / 1000)} seconds (with S key)`);
+                this.resetGame();
+                return;
+            }
+
             alert(`You won! Total time: ${Math.floor(this.timer.currentTime / 1000)} seconds`);
 
             // On stock le temps dans le span score
             // Le span score permettra de récupérer le dernier score du joueur
+            // On le stocke uniquement si aucun niveau n'a été passé
 
             let score = document.querySelector(".score").textContent;
             if(score === "0") {
@@ -607,4 +617,3 @@ export default class Game {
         };
     }
 }
-  
