@@ -40,6 +40,7 @@ canvas {
     margin-top: 20px;
 
     width: 80%;
+    height: 40px;
     padding: 20px;
     border-radius: 100px;
     background-color: #ffffff;
@@ -97,3 +98,8 @@ canvas {
     border: none;
     border-radius: 20px;
 }
+
+.controls {
+    flex-direction: row;
+
+}  
